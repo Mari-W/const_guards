@@ -34,13 +34,13 @@ let head: &() = first(&slice);
 ```
 Finally we could even express this as a trait to make it more accessable:
 ```rust
-trait SliceHead<'a, T, const N: usize> {
+trait SliceHead<T, const N: usize> {
     #[guard(<const N: usize> { N > 0 })]
-    fn head(&self) -> &'a T;
+    fn head(&self) -> &T;
 }
 
-impl<'a, T, const N: usize> SliceHead<'a, T, N> for &'a [T; N] {
-    fn head(&self) -> &'a T {
+impl<T, const N: usize> SliceHead<T, N> for [T; N] {
+    fn head(&self) -> &T {
         &self[0]
     }
 }
