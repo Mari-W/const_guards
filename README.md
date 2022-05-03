@@ -78,7 +78,7 @@ fn main() {
 fn f<const N: usize>()
 where
     Guard<{
-        pub const fn _f_guard<const N: usize>() -> bool {
+        const fn _f_guard<const N: usize>() -> bool {
             if !N > 0 {
                 panic!("guard evaluated to false")
             }
