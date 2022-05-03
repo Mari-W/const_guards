@@ -4,8 +4,13 @@ extern crate const_guards;
 use const_guards::guard;
 
 fn main() {
-    f::<0>()
+    let _ = A::<(), 1>::B([(); 1]);
 }
 
-#[guard(<const N: usize> {N > 0})]
-fn f<const N: usize>() {}
+#[guard(N > 0)]
+pub enum A<T, const N: usize>
+where
+    T: Eq,
+{
+    B([T; N]),
+}
