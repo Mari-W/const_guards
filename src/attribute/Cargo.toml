@@ -1,0 +1,15 @@
+[package]
+edition = "2021"
+name = "attribute"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+derive-syn-parse = "0.1.5"
+proc-macro2 = "1.0.37"
+quote = "1.0.18"
+syn = {version = "1.0.92", features = ["full"]}
+
+[lib]
+proc-macro = true
