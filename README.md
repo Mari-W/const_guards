@@ -5,49 +5,49 @@ With `const_guards` you can express certain compile time constraints on rust's [
 For documentation visit [docs.rs](https://docs.rs/const-guards).
 
 ## Motivation
-Consider the following usage of the `first` method on slices from the standard library: 
+Consider the following usage of the `first` method on arrays from the standard library: 
 ```rust
-let slice: [(); 1] = [(); 1];
-let head: Option<&()> = slice.first();
+let array: [(); 1] = [(); 1];
+let head: Option<&()> = array.first();
 ``` 
 Would it be nice if we could just write
 ```rust
-let head: &() = slice.first();
+let head: &() = array.first();
 ```
-since the compiler should know this slice has length `1` at this point.
+since the compiler should know this array has length `1` at this point.
 With const guards we can express such as follows:
 ```rust
 #[guard(N > 0)]
-fn first<'a, T, const N: usize>(slice: &'a [T; N]) -> &'a T {
-    &slice[0]
+fn first<'a, T, const N: usize>(array: &'a [T; N]) -> &'a T {
+    &array[0]
 }
 ```
-The index call on the slice `&slice[0]` cannot possible fail because we enforced the length of the slice to be `> 0` at compile time. We could now call it as follows 
+The index call on the array `&array[0]` cannot possible fail because we enforced the length of the array to be `> 0` at compile time. We could now call it as follows 
 ```rust
-let slice: [(); 1] = [(); 1];
-let head: &() = first(&slice);
+let array: [(); 1] = [(); 1];
+let head: &() = first(&array);
 ```
-while the case where the slice is actually empty would _fail to compile_:
+while the case where the array is actually empty would _fail to compile_:
 ```
-let slice: [(); 0] = [(); 0];
-let head: &() = first(&slice);
+let array: [(); 0] = [(); 0];
+let head: &() = first(&array);
 ```
 Finally we could even express this as a trait to make it more accessable:
 ```rust
-trait SliceHead<T, const N: usize> {
+trait ArrayHead<T, const N: usize> {
     #[guard(<const N: usize> { N > 0 })]
     fn head(&self) -> &T;
 }
 
-impl<T, const N: usize> SliceHead<T, N> for [T; N] {
+impl<T, const N: usize> ArrayHead<T, N> for [T; N] {
     fn head(&self) -> &T {
         &self[0]
     }
 }
 
 fn main() {
-    let slice: &[(); 1] = &[(); 1];
-    let head: &() = slice.head();
+    let array: &[(); 1] = &[(); 1];
+    let head: &() = array.head();
 }
 ```
 Though, as you can see, we need to introduce generics not introduced by the guarded item explicitly.

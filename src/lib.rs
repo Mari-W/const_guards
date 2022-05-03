@@ -93,13 +93,13 @@
 //! # #![feature(generic_const_exprs)]
 //! # use const_guards::guard;
 //! #
-//! trait SliceHead<'a, T, const N: usize> {
+//! trait ArrayHead<T, const N: usize> {
 //!   #[guard(<const N: usize> { N > 0 })]
-//!   fn head(&self) -> &'a T;
+//!   fn head(&self) -> &T;
 //! }
 //!
-//! impl<'a, T, const N: usize> SliceHead<'a, T, N> for &'a [T; N] {
-//!   fn head(&self) -> &'a T {
+//! impl<T, const N: usize> ArrayHead<T, N> for [T; N] {
+//!   fn head(&self) -> &T {
 //!     &self[0]
 //!   }
 //! }
@@ -109,19 +109,19 @@
 //! # #![feature(generic_const_exprs)]
 //! # use const_guards::guard;
 //! #
-//! # trait SliceHead<'a, T, const N: usize> {
+//! # trait ArrayHead<T, const N: usize> {
 //! #  #[guard(<const N: usize> { N > 0 })]
-//! #  fn head(&self) -> &'a T;
+//! #  fn head(&self) -> &T;
 //! # }
 //! #
-//! # impl<'a, T, const N: usize> SliceHead<'a, T, N> for &'a [T; N] {
-//! #  fn head(&self) -> &'a T {
+//! # impl<T, const N: usize> ArrayHead<T, N> for [T; N] {
+//! #  fn head(&self) -> &T {
 //! #    &self[0]
 //! #   }
 //! # }
 //! # fn main() {
-//!   let slice = &[(); 0];
-//!   let head: &() = slice.head();
+//!   let array = &[(); 0];
+//!   let head: &() = array.head();
 //! # }
 //! ```
 //! ```rust
@@ -129,19 +129,19 @@
 //! # #![feature(generic_const_exprs)]
 //! # use const_guards::guard;
 //! #
-//! # trait SliceHead<'a, T, const N: usize> {
+//! # trait ArrayHead<T, const N: usize> {
 //! #  #[guard(<const N: usize> { N > 0 })]
-//! #  fn head(&self) -> &'a T;
+//! #  fn head(&self) -> &T;
 //! # }
 //! #
-//! # impl<'a, T, const N: usize> SliceHead<'a, T, N> for &'a [T; N] {
-//! #  fn head(&self) -> &'a T {
+//! # impl<T, const N: usize> ArrayHead<T, N> for &[T; N] {
+//! #  fn head(&self) -> &T {
 //! #    &self[0]
 //! #   }
 //! # }
 //! # fn main() {
-//!   let slice = &[(); 1];
-//!   let head: &() = slice.head();
+//!   let array = &[(); 1];
+//!   let head: &() = array.head();
 //! # }
 //! ```
 //!
@@ -168,15 +168,15 @@
 //! # #![feature(generic_const_exprs)]
 //! # use const_guards::guard;
 //! #
-//! trait SliceHead<'a, T, const N: usize> {
+//! trait ArrayHead<T, const N: usize> {
 //!   #[guard(<const N: usize> {
 //!     if N == 0 {
-//!         panic!("expected at least one item in slice")
+//!         panic!("expected at least one item in array")
 //!     } else {
 //!         true
 //!     }
 //!   })]
-//!   fn head(&self) -> &'a T;
+//!   fn head(&self) -> &T;
 //! }
 //! ```
 //!
@@ -194,9 +194,9 @@
 //!   N > 0
 //! }
 //!
-//! trait SliceHead<'a, T, const N: usize> {
+//! trait ArrayHead<T, const N: usize> {
 //!   #[guard(<const N: usize> { is_not_empty::<N>() })]
-//!   fn head(&self) -> &'a T;
+//!   fn head(&self) -> &T;
 //! }
 //! ```
 
