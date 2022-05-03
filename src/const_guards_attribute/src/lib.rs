@@ -8,8 +8,8 @@ use syn::{
     parse,
     parse::ParseStream,
     token::{Brace, Where},
-    Block, ConstParam, Expr, GenericParam, Generics, Item, ItemEnum, ItemFn, ItemStruct, Token,
-    TraitItem, TraitItemMethod, TraitItemType, TypeParam,
+    Block, ConstParam, Expr, GenericParam, Generics, Item, ItemEnum, ItemFn, ItemImpl, ItemStruct,
+    ItemType, ItemUnion, Token, TraitItem, TraitItemMethod, TraitItemType, TypeParam, Fields,
 };
 
 const INVALID_ITEM: &str = "guarded items need to support `where` clauses";
@@ -81,7 +81,7 @@ pub fn guard(attr: TokenStream, stream: TokenStream) -> TokenStream {
 
     let tokens = quote! {
         #decl #where_ext const_guards::Guard<{
-            const fn #guard_ident #generics() -> bool {
+            #[allow(non_snake_case, private_in_public)] const fn #guard_ident #generics() -> bool {
                 if !#guard {
                     panic!(#GUARD_FAILED)
                 }
@@ -90,7 +90,7 @@ pub fn guard(attr: TokenStream, stream: TokenStream) -> TokenStream {
             #guard_ident::<#param_idents>()
         }>: const_guards::Protect #cont
     };
-    
+
     TokenStream::from(tokens)
 }
 
@@ -108,16 +108,16 @@ fn where_ext(generics: &Generics) -> Option<proc_macro2::TokenStream> {
         .as_ref()
         .map(|wc| {
             if wc.predicates.trailing_punct() {
-                Some(quote! {,})
-            } else {
                 None
+            } else {
+                Some(quote! {,})
             }
         })
         .or_else(|| {
             let kw_where = Where(Span::call_site());
             Some(Some(quote!(#kw_where)))
         })
-        // unwrap because its either Some(Some(",")), Some(None) or Some(Some("where"))
+        // unwrap because its either Some(None), Some(Some(",")), or Some(Some("where"))
         .unwrap()
 }
 
@@ -182,12 +182,16 @@ impl From<Item> for GuardItem {
                 generics,
                 variants,
                 ..
-            }) => (
-                quote! {#(#attrs)* #vis #enum_token #ident #generics},
-                ident,
-                generics,
-                quote! {{ #variants }},
-            ),
+            }) => {
+                // strangely this isn't rendered otherwise?
+                let clause = &generics.where_clause;
+                (
+                    quote! {#(#attrs)* #vis #enum_token #ident #generics #clause},
+                    ident,
+                    generics,
+                    quote! {{ #variants }},
+                )
+            }
             Item::Fn(ItemFn {
                 attrs,
                 vis,
@@ -199,7 +203,26 @@ impl From<Item> for GuardItem {
                 sig.generics,
                 quote! {#block},
             ),
-            Item::Impl(_) => todo!(),
+            Item::Impl(ItemImpl {
+                attrs,
+                defaultness,
+                unsafety,
+                impl_token,
+                generics,
+                trait_,
+                self_ty,
+                items,
+                ..
+            }) => {
+                let trait_ = trait_.map(|(bang, path, kw_for)| quote! { #bang #path #kw_for});
+                let clause = &generics.where_clause;
+                (
+                    quote! {#(#attrs)* #defaultness #unsafety #impl_token #generics #trait_ #self_ty #clause},
+                    Ident::new("impl", Span::call_site()),
+                    generics,
+                    quote! {{#(#items)*}},
+                )
+            }
             Item::Struct(ItemStruct {
                 attrs,
                 vis,
@@ -208,15 +231,53 @@ impl From<Item> for GuardItem {
                 generics,
                 fields,
                 semi_token,
-            }) => (
-                quote! {#(#attrs)* #vis #struct_token #ident #generics #fields},
+            }) => {
+                let clause = &generics.where_clause;
+                let (a, b) = {
+                    if matches!(fields, Fields::Named(_)) {
+                        (quote!{#clause}, Some(quote!{#fields}))
+                    } else {
+                        (quote!{#fields #clause}, None)
+                    }
+                };
+                (
+                    quote! {#(#attrs)* #vis #struct_token #ident #generics #a},
+                    ident,
+                    generics,
+                    quote! {#b #semi_token},
+                )
+            }
+            Item::Type(ItemType {
+                attrs,
+                vis,
+                type_token,
                 ident,
                 generics,
-                quote! { #semi_token},
+                eq_token,
+                ty,
+                semi_token,
+            }) => {
+                let clause = &generics.where_clause;
+                (
+                    quote! {#(#attrs)* #vis #type_token #ident #generics #clause},
+                    ident,
+                    generics,
+                    quote! {#eq_token #ty #semi_token},
+                )
+            }
+            Item::Union(ItemUnion {
+                attrs,
+                vis,
+                union_token,
+                ident,
+                generics,
+                fields,
+            }) => (
+                quote! {#(#attrs)* #vis #union_token #ident #generics},
+                ident,
+                generics,
+                quote! {#fields},
             ),
-            Item::Trait(_) => todo!(),
-            Item::Type(_) => todo!(),
-            Item::Union(_) => todo!(),
             _ => panic!("{INVALID_ITEM}"),
         };
 
@@ -253,16 +314,12 @@ impl From<TraitItem> for GuardItem {
                 default,
                 semi_token,
             }) => {
-                let cont = if let Some((_, ty)) = default {
-                    quote! { #colon_token #bounds = #ty #semi_token}
-                } else {
-                    quote! { #colon_token #bounds #semi_token}
-                };
+                let default = default.map(|(eq, ty)| quote! {#eq #ty});
                 (
                     quote! {#(#attrs)* #type_token #ident},
                     ident,
                     generics,
-                    cont,
+                    quote! { #colon_token #bounds #default #semi_token},
                 )
             }
             _ => panic!("{INVALID_ITEM}"),
