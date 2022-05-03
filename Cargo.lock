@@ -3,21 +3,21 @@
 version = 3
 
 [[package]]
-name = "attribute"
+name = "const_guards"
+version = "0.1.0"
+dependencies = [
+ "const_guards_attribute",
+ "trybuild",
+]
+
+[[package]]
+name = "const_guards_attribute"
 version = "0.1.0"
 dependencies = [
  "derive-syn-parse",
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "const_guards"
-version = "0.1.0"
-dependencies = [
- "attribute",
- "trybuild",
 ]
 
 [[package]]

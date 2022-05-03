@@ -205,8 +205,8 @@
 //! }
 //! ```
 
-extern crate attribute;
-pub use attribute::guard;
+extern crate const_guards_attribute;
+pub use const_guards_attribute::guard;
 
 pub struct Guard<const U: bool>;
 

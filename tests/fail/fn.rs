@@ -9,4 +9,3 @@ fn main() {
 
 #[guard(<const N: usize> {N > 0})]
 fn f<const N: usize>() {}
-
