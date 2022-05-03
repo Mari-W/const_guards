@@ -46,7 +46,7 @@ impl<'a, T, const N: usize> SliceHead<'a, T, N> for &'a [T; N] {
 }
 
 fn main() {
-    let slice: [(); 1] = [(); 1];
+    let slice: &[(); 1] = &[(); 1];
     let head: &() = slice.head();
 }
 ```
@@ -78,7 +78,7 @@ fn main() {
 fn f<const N: usize>()
 where
     Guard<{
-        const fn _f_guard<const N: usize>() -> bool {
+        pub const fn _f_guard<const N: usize>() -> bool {
             if !N > 0 {
                 panic!("guard evaluated to false")
             }
