@@ -7,18 +7,18 @@ members = [
 authors = ["Marius Weidner <const_guards@mariusweidner.de>"]
 categories = ["development-tools "]
 description = "An attribute macro for compile time constraints on const generics"
+documentation = "https://docs.rs/const_guards"
 edition = "2021"
+homepage = "https://github.com/Mari-W/const_guards"
 keywords = ["const", "generics"]
 license = "MIT"
 name = "const_guards"
 readme = "README.md"
 repository = "https://github.com/Mari-W/const_guards"
-homepage =  "https://github.com/Mari-W/const_guards"
-documentation = "https://docs.rs/const_guards"
 version = "0.1.0"
 
 [dependencies]
-attribute = {path = "src/attribute"}
+attribute = {path = "src/attribute", version = "0.1"}
 
 [dev-dependencies]
 trybuild = "1.0.61"
