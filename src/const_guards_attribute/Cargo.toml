@@ -10,7 +10,7 @@ license = "MIT"
 name = "const_guards_attribute"
 readme = "../../README.md"
 repository = "https://github.com/Mari-W/const_guards"
-version = "0.1.1"
+version = "0.1.2"
 
 [dependencies]
 derive-syn-parse = "0.1.5"

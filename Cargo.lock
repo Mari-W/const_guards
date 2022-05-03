@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "const_guards"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "const_guards_attribute",
  "trybuild",
@@ -12,7 +12,7 @@ dependencies = [
 
 [[package]]
 name = "const_guards_attribute"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "derive-syn-parse",
  "proc-macro2",
