@@ -77,16 +77,15 @@ fn main() {
 
 fn f<const N: usize>()
 where
-    Guard<
-        {
-            const fn _f_guard<const N: usize>() {
-                if !{ N > 0 } {
-                    panic!("guard evaluated to false")
-                }
+    Guard<{
+        const fn _f_guard<const N: usize>() -> bool {
+            if !N > 0 {
+                panic!("guard evaluated to false")
             }
-            _f_guard::<N>()
-        },
-    >: Protect,
+            true
+        }
+        _f_guard::<N>()
+    }>: Protect,
 {
     todo!()
 }
