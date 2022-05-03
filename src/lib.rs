@@ -155,7 +155,7 @@
 //!
 //! ## Advanced
 //!
-//! ### Custom Error Messages
+//! #### Custom Error Messages
 //! Raise an custom error by `panic!`-ing inside the guard.
 //! This will be rendered as compile error with help of rust's [`const_panic`].
 //! With that in mind we could modify the trait definition from
@@ -180,7 +180,7 @@
 //! }
 //! ```
 //!
-//! ### Const Functions
+//! #### Const Functions
 //! It's possible to outsource logic by calling other `const fn`.
 //! With that in mind we could modify the trait definition from
 //! [Polymorphic Block Guard](#polymorphic-Block-guard).
