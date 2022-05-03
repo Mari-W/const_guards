@@ -1,4 +1,4 @@
-# Const Guard [[docs.rs](https://docs.rs/const-guards)]
+# Const Guards [[docs.rs](https://docs.rs/const-guards)]
 With `const_guards` you can express certain compile time constraints on rust's [`const_generics`](https://github.com/rust-lang/rust/issues/44580) using the unstable [`generic_const_exprs`](https://github.com/rust-lang/rust/issues/76560) feature.
 
 ## Documentation
