@@ -66,10 +66,10 @@ fn f<const N: usize>() {
 ```
 and have a look at the expanded form:
 ```rust
-struct Guard<const U: ()>;
+struct Guard<const U: bool>;
 
 trait Protect {}
-impl Protect for Guard<{}> {}
+impl Protect for Guard<true> {}
 
 fn main() {
     f::<0>()
