@@ -1,8 +1,8 @@
 error[E0080]: evaluation of `f::<0_usize>::{constant#0}` failed
   --> tests/fail/fn.rs:10:1
    |
-10 | #[guard(<const N: usize> {N > 0})]
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+10 | #[guard(N > 0)]
+   | ^^^^^^^^^^^^^^^
    | |
    | the evaluated program panicked at 'guard evaluated to false', $DIR/tests/fail/fn.rs:10:1
    | inside `_f_guard::<0_usize>` at /home/mari/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panic.rs:57:9

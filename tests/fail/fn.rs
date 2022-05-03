@@ -7,5 +7,5 @@ fn main() {
     f::<0>()
 }
 
-#[guard(<const N: usize> {N > 0})]
+#[guard(N > 0)]
 fn f<const N: usize>() {}
