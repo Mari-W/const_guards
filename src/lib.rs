@@ -200,6 +200,8 @@
 //! }
 //! ```
 
+#![no_std]
+
 extern crate const_guards_attribute;
 pub use const_guards_attribute::guard;
 
