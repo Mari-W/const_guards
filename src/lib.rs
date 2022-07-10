@@ -199,6 +199,9 @@
 //!   fn head(&self) -> &T;
 //! }
 //! ```
+//! #### Marco Expansion
+//! For an example for the expansion that takes places see [`here`]
+//! [`here`]: https://docs.rs/const_guards/latest/const_guards/attr.guard.html
 
 extern crate const_guards_attribute;
 pub use const_guards_attribute::guard;
