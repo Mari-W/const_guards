@@ -1,43 +1,3 @@
-//! # Macro Expansion
-//! This simple function with a const guard
-//! ```no_run
-//! fn main() {
-//!    f::<0>()
-//! }
-//!
-//! #[guard(N > 0)]
-//! fn f<const N: usize>() {
-//!    todo!()
-//! }
-//! ```
-//! 
-//! would expand to
-//! 
-//! ```no_run
-//! struct Guard<const U: bool>;
-//! trait Protect {}
-//! impl Protect for Guard<true> {}
-//! 
-//! fn main() {
-//!    f::<0>()
-//! }
-//!
-//! fn f<const N: usize>()
-//! where
-//!    Guard<{
-//!        const fn _f_guard<const N: usize>() -> bool {
-//!            if !N > 0 {
-//!                panic!("guard evaluated to false")
-//!            }
-//!            true
-//!        }
-//!        _f_guard::<N>()
-//!    }>: Protect,
-//! {
-//!    todo!()
-//! }
-//! ```
-
 use std::cmp::Ordering;
 
 use derive_syn_parse::Parse;
@@ -87,6 +47,45 @@ enum Guard {
     Expr(Expr),
 }
 
+/// # Macro Expansion
+/// This simple function with a const guard
+/// ```no_run
+/// fn main() {
+///    f::<0>()
+/// }
+///
+/// #[guard(N > 0)]
+/// fn f<const N: usize>() {
+///    todo!()
+/// }
+/// ```
+/// 
+/// would expand to
+/// 
+/// ```no_run
+/// struct Guard<const U: bool>;
+/// trait Protect {}
+/// impl Protect for Guard<true> {}
+/// 
+/// fn main() {
+///    f::<0>()
+/// }
+///
+/// fn f<const N: usize>()
+/// where
+///    Guard<{
+///        const fn _f_guard<const N: usize>() -> bool {
+///            if !N > 0 {
+///                panic!("guard evaluated to false")
+///            }
+///            true
+///        }
+///        _f_guard::<N>()
+///    }>: Protect,
+/// {
+///    todo!()
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn guard(attr: TokenStream, stream: TokenStream) -> TokenStream {
     let GuardItem {
